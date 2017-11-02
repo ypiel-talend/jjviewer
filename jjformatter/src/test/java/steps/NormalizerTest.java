@@ -11,7 +11,31 @@ import static org.junit.Assert.assertTrue;
 public class NormalizerTest {
 
     @Test
-    public void normalierSimpleText() {
+    public void normalierSimpleClassWithComments() {
+        try {
+            ClassLoader loader = getClass().getClassLoader();
+            InputStream is = loader.getResourceAsStream("samples/SimpleClassWithComments.java");
+            String simple_java = IOUtils.toString(is, StandardCharsets.UTF_8);
+
+            InputStream isol = loader.getResourceAsStream("samples/SimpleClassWithComments_normalized.java");
+            String ref_normalized_java = IOUtils.toString(isol, StandardCharsets.UTF_8);
+
+            Normalizer n = new Normalizer(simple_java);
+            String normalized_java = n.format();
+
+            FileWriter fw = new FileWriter("c:/temp/normalized.java");
+            fw.write(normalized_java);
+            fw.close();
+
+            assertTrue(ref_normalized_java.equals(normalized_java));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void normalierSimpleClass() {
         try {
             ClassLoader loader = getClass().getClassLoader();
             InputStream is = loader.getResourceAsStream("samples/SimpleClass.java");
@@ -22,8 +46,6 @@ public class NormalizerTest {
 
             Normalizer n = new Normalizer(simple_java);
             String normalized_java = n.format();
-
-            System.out.printf(normalized_java);
 
             assertTrue(ref_normalized_java.equals(normalized_java));
 

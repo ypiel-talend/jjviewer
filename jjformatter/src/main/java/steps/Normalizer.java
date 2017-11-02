@@ -17,6 +17,8 @@ public class Normalizer implements IFormatStep {
 
     @Override
     public String format() {
+        jjsrc = jjsrc.replaceAll("\\r\\n", "\n");
+
         int nChar = jjsrc.length();
 
         char prev = ' ';
@@ -59,6 +61,7 @@ public class Normalizer implements IFormatStep {
             }
             if (inMultiDoc && cur == '/' && prev == '*') {
                 inMultiDoc = false;
+                sb.append('\n');
             }
 
             prev = cur;
@@ -71,6 +74,7 @@ public class Normalizer implements IFormatStep {
         str = str.replaceAll(" *\\} *", "}");
         str = str.replaceAll(" *\\( *", "(");
         str = str.replaceAll(" *\\) *", ")");
+        str = str.replaceAll("\n ", "\n");
         return str;
     }
 }
