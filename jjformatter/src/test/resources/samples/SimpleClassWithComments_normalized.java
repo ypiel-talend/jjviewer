@@ -1,7 +1,7 @@
 package samples;/**
-* This is a simple class
-* with comments on multi-line
-*/
+ * This is a simple class
+ * with comments on multi-line
+ */
 public class SimpleClass{// And simple line comments
 private String aVar = "";// A single comment
 // Another simple line

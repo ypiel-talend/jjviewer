@@ -5,7 +5,7 @@ package steps;
  */
 public class Normalizer implements IFormatStep {
 
-    private String JMP_LINE_CARS = " \n\r\f";
+    private String JMP_LINE_CARS = "\n\r\f";
     private String BLANK_CARS = " \t";
 
     // The raw source code to normalize.
@@ -18,6 +18,7 @@ public class Normalizer implements IFormatStep {
     @Override
     public String format() {
         jjsrc = jjsrc.replaceAll("\\r\\n", "\n");
+        jjsrc = jjsrc.replaceAll("[ \t]+\n", "\n");
 
         int nChar = jjsrc.length();
 
@@ -46,12 +47,23 @@ public class Normalizer implements IFormatStep {
                 // Keep \n in comments and Strings
                 sb.append('\n');
             } else {
-                if (BLANK_CARS.indexOf(cur) >= 0 || JMP_LINE_CARS.indexOf(cur) >= 0) {
-                    if (!isBlank) { // Let only remove extra spaces and transform \t by space
-                        sb.append(' ');
-                        isBlank = true;
+                if(JMP_LINE_CARS.indexOf(cur) >= 0 && !inDoc && !inMultiDoc){
+                    if(prev != ';' && prev != '>' && !inDoc){
+                        sb.append('X');
+                        isBlank = true && !inString;
                     }
-                } else {
+                }
+                else if (BLANK_CARS.indexOf(cur) >= 0) {
+                    if (!isBlank) { // Let remove extra spaces and transform \t by space
+                        sb.append(' ');
+                        isBlank = true && !inString;
+                    }
+                }
+                else if (cur == ' ' && prev == '\n' && !inDoc && !inMultiDoc && !inString){
+                    // remove space if first char of the line
+                    isBlank = true && !inString;
+                }
+                else {
                     sb.append(cur);
                     isBlank = false;
                 }
@@ -74,7 +86,7 @@ public class Normalizer implements IFormatStep {
         str = str.replaceAll(" *\\} *", "}");
         str = str.replaceAll(" *\\( *", "(");
         str = str.replaceAll(" *\\) *", ")");
-        str = str.replaceAll("\n ", "\n");
+        //str = str.replaceAll("\n ", "\n");
         return str;
     }
 }

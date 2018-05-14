@@ -11,6 +11,30 @@ import static org.junit.Assert.assertTrue;
 public class NormalizerTest {
 
     @Test
+    public void normalierSimpleJavaJet() {
+        try {
+            ClassLoader loader = getClass().getClassLoader();
+            InputStream is = loader.getResourceAsStream("samples/simple.javajet");
+            String simple_java = IOUtils.toString(is, StandardCharsets.UTF_8);
+
+            InputStream isol = loader.getResourceAsStream("samples/simple_normalized.javajet");
+            String ref_normalized_java = IOUtils.toString(isol, StandardCharsets.UTF_8);
+
+            Normalizer n = new Normalizer(simple_java);
+            String normalized_java = n.format();
+
+            FileWriter fw = new FileWriter("c:/temp/normalized.javajet");
+            fw.write(normalized_java);
+            fw.close();
+
+            assertTrue(ref_normalized_java.equals(normalized_java));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void normalierSimpleClassWithComments() {
         try {
             ClassLoader loader = getClass().getClassLoader();
@@ -23,7 +47,7 @@ public class NormalizerTest {
             Normalizer n = new Normalizer(simple_java);
             String normalized_java = n.format();
 
-            FileWriter fw = new FileWriter("c:/temp/normalized.java");
+            FileWriter fw = new FileWriter("c:/temp/normalierSimpleClassWithComments.java");
             fw.write(normalized_java);
             fw.close();
 
@@ -46,6 +70,10 @@ public class NormalizerTest {
 
             Normalizer n = new Normalizer(simple_java);
             String normalized_java = n.format();
+
+            FileWriter fw = new FileWriter("c:/temp/normalierSimpleClass.java");
+            fw.write(normalized_java);
+            fw.close();
 
             assertTrue(ref_normalized_java.equals(normalized_java));
 
